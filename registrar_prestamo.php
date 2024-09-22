@@ -7,31 +7,39 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $fecha_prestamo = $_POST['fecha_prestamo'];
     $fecha_devolucion = $_POST['fecha_devolucion'];
 
-    $buscar_prestamos_vencidos = "SELECT * FROM prestamo WHERE CURDATE() > fecha_devolucion AND id_cliente='$id_cliente' AND activo=1";
-    $result_prestamos_vencidos = $conn->query($buscar_prestamos_vencidos);
-
-    if ($result_prestamos_vencidos->num_rows > 0) {
-        echo "El cliente tiene prestamos vencidos";
+    if ($fecha_prestamo > $fecha_devolucion) {
+        echo "La fecha de prestamo no puede ser mayor a la fecha de devolucion";
         $conn->close();
     } else {
-        $buscar_libro_prestado = "SELECT prestado FROM libro WHERE id_libro='$id_libro'";
-        $result_libro_prestado = $conn->query($buscar_libro_prestado);
-        if ($result_libro_prestado->num_rows > 0) {
-            $row = $result_libro_prestado->fetch_assoc();
-            if ($row['prestado'] == 1) {
-                echo "El libro ya esta prestado";
-                $conn->close();
-            } else {
-                $sql = "INSERT INTO prestamo (id_cliente, id_libro, fecha_prestamo, fecha_devolucion, activo) VALUES
-                ('$id_cliente', '$id_libro', '$fecha_prestamo', '$fecha_devolucion' , 1)";
+        $buscar_prestamos_vencidos = "SELECT * FROM prestamo WHERE CURDATE() > fecha_devolucion AND id_cliente='$id_cliente' AND activo=1";
+        $result_prestamos_vencidos = $conn->query($buscar_prestamos_vencidos);
 
-                if ($conn->query($sql) === TRUE) {
-                    echo "Nuevo prestamo registrado con éxito";
+        if ($result_prestamos_vencidos->num_rows > 0) {
+            echo "El cliente tiene prestamos vencidos";
+            $conn->close();
+        } else {
+            $buscar_libro_prestado = "SELECT prestado FROM libro WHERE id_libro='$id_libro'";
+            $result_libro_prestado = $conn->query($buscar_libro_prestado);
+            if ($result_libro_prestado->num_rows > 0) {
+                $row = $result_libro_prestado->fetch_assoc();
+                if ($row['prestado'] == 1) {
+                    echo "El libro ya esta prestado";
+                    $conn->close();
                 } else {
-                    echo "Error: " . $conn->error;
-                }
+                    $actualizar_estado_libro = "UPDATE libro SET prestado=1 WHERE id_libro='$id_libro'";
+                    $conn->query($actualizar_estado_libro);
+                    
+                    $sql = "INSERT INTO prestamo (id_cliente, id_libro, fecha_prestamo, fecha_devolucion, activo) VALUES
+                    ('$id_cliente', '$id_libro', '$fecha_prestamo', '$fecha_devolucion' , 1)";
 
-                $conn->close();
+                    if ($conn->query($sql) === TRUE) {
+                        echo "Nuevo prestamo registrado con éxito";
+                    } else {
+                        echo "Error: " . $conn->error;
+                    }
+
+                    $conn->close();
+                }
             }
         }
     }
@@ -68,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <br><br><br>
     <a href='listar_prestamos.php'>Listado de prestamos</a>
     <br><br><br>
-    <a href='registrar_clientes.php'>Registrar Cliente  &emsp;</a>
+    <a href='registrar_clientes.php'>Registrar Cliente &emsp;</a>
     <a href='registrar_libros.php'>Registrar libro &emsp;</a>
     <a href='registrar_prestamo.php'>Registrar prestamo &emsp;</a>
     <a href='registrar_devolucion.php'>Registrar devolucion</a>

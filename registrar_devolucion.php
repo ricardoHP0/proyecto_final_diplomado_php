@@ -26,6 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 $monto_mora = $dias * $costo_diario_mora;
             }
+            header("Location: URL");
         }
         else {
             echo "El prestamo no existe";

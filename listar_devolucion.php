@@ -22,7 +22,7 @@
             while ($row=$result->fetch_assoc()){
                 echo   "<tr>
                             <td>{$row['id_prestamo']}</td>
-                            <td>{$row['fecha_devolcuion']}</td>
+                            <td>{$row['fecha_devolucion']}</td>
                             <td>{$row['monto_mora']}</td>
                         </tr>";
             }

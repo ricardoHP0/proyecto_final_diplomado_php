@@ -38,6 +38,6 @@
         ?>
     </table>
     <br><br>
-    <a href='registrar_prestamo.php'>Registrar nuevo Libro</a>
+    <a href='registrar_prestamo.php'>Registrar nuevo Prestamo</a>
 </body>
 </html>
