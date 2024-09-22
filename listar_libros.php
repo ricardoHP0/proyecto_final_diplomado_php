@@ -16,10 +16,9 @@
             <th>ISBN</th>
             <th>Numero de edicion</th>
             <th>Costo por mora</th>
-            <th>Estado</th>
         </tr>
         <?php
-        $sql="SELECT * FROM libro";
+        $sql="SELECT * FROM libro WHERE prestado=0";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0){
@@ -31,7 +30,6 @@
                             <td>{$row['ISBN']}</td>
                             <td>{$row['numero_edicion']}</td>
                             <td>{$row['costo_diario_mora']}</td>
-                            <td>{$row['prestado']}</td>
                         </tr>";
             }
         }
