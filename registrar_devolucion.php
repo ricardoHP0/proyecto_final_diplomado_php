@@ -9,23 +9,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $informacion_costo = "SELECT costo_diario_mora FROM libro WHERE id_libro=(SELECT id_libro FROM prestamo WHERE id_prestamo='$id_prestamo')";
         $result = $conn->query($informacion_costo);
         $row = $result->fetch_assoc();
-        $costo_diario_mora = $row['costo_diario_mora'];
-        $monto_mora = 0;
-
-        $informacion_devolucion = "SELECT fecha_devolucion FROM prestamo WHERE id_prestamo='$id_prestamo'";
-        $result_devolucion = $conn->query($informacion_devolucion);
-        $row = $result_devolucion->fetch_assoc();
-        $fecha_programada_devolucion = $row['fecha_devolucion'];
-
-
-        $fecha_actual = date('Y-m-d');
-        $dias = (strtotime($fecha_devolucion) - strtotime($fecha_programada_devolucion)) / (60 * 60 * 24);
-        if ($dias <= 0) {
+        if ($result->num_rows > 0) {
+            $costo_diario_mora = $row['costo_diario_mora'];
             $monto_mora = 0;
-        } else {
-            $monto_mora = $dias * $costo_diario_mora;
-        }
 
+            $informacion_devolucion = "SELECT fecha_devolucion FROM prestamo WHERE id_prestamo='$id_prestamo'";
+            $result_devolucion = $conn->query($informacion_devolucion);
+            $row = $result_devolucion->fetch_assoc();
+            $fecha_programada_devolucion = $row['fecha_devolucion'];
+
+
+            $fecha_actual = date('Y-m-d');
+            $dias = (strtotime($fecha_devolucion) - strtotime($fecha_programada_devolucion)) / (60 * 60 * 24);
+            if ($dias <= 0) {
+                $monto_mora = 0;
+            } else {
+                $monto_mora = $dias * $costo_diario_mora;
+            }
+        }
+        else {
+            echo "El prestamo no existe";
+            $conn->close();
+        }
     }
 
     if (isset($_POST['registrar'])) {
@@ -53,7 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 $actualizar_devolucion = "UPDATE prestamo SET activo=0 WHERE id_prestamo='$id_prestamo'";
                 $conn->query($actualizar_devolucion);
-                
+
 
                 $sql = "INSERT INTO devolucion (id_prestamo, fecha_devolucion, monto_mora) VALUES
                 ( '$id_prestamo', '$fecha_devolucion', '$monto_mora')";
