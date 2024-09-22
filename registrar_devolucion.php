@@ -103,6 +103,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="submit" name="registrar" value="Registrar">
     </form>
     <br><br><br>
+    <a href='listar_devolucion.php'>Listado de devoluciones realizadas</a>
+    <br><br><br>
     <a href='registrar_clientes.php'>Registrar Cliente &emsp;</a>
     <a href='registrar_libros.php'>Registrar libro &emsp;</a>
     <a href='registrar_prestamo.php'>Registrar prestamo &emsp;</a>
